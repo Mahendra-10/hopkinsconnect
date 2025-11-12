@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profiles - HopkinsConnect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎓 HopkinsConnect</h1>
+    </header>
+    
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="profiles.html">Browse Profiles</a>
+    </nav>
+    
+    <main>
+        <section class="search-section">
+            <h2>Find Collaborators</h2>
+            <input type="text" id="searchInput" placeholder="Search by name, interests, or major...">
+            <button onclick="searchProfiles()" class="btn btn-primary">Search</button>
+            <button onclick="loadProfiles()" class="btn btn-secondary">Show All</button>
+        </section>
+        
+        <section id="profilesContainer" class="profiles-grid">
+            <p>Loading profiles...</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>HopkinsConnect - JHU Cloud Security Project</p>
+    </footer>
+    
+    <script src="app.js"></script>
+    <script>
+        // Load profiles on page load
+        document.addEventListener('DOMContentLoaded', loadProfiles);
+    </script>
+</body>
+</html>
+

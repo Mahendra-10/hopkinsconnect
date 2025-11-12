@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - HopkinsConnect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎓 HopkinsConnect</h1>
+    </header>
+    
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="profiles.html">Browse Profiles</a>
+    </nav>
+    
+    <main>
+        <section class="form-section">
+            <h2>Create Your Profile</h2>
+            <form id="registerForm">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="JHU Email (@jhu.edu)" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="text" id="major" placeholder="Major/Department">
+                <input type="text" id="interests" placeholder="Interests (e.g., AI, Biotech, Startups)">
+                <textarea id="bio" placeholder="Tell us about yourself and what you're looking for..." rows="4"></textarea>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+            <div id="registerMessage"></div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>HopkinsConnect - JHU Cloud Security Project</p>
+    </footer>
+    
+    <script src="app.js"></script>
+</body>
+</html>
+
