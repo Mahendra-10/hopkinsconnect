@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hopkinsconnect-frontend
+  labels:
+    app: hopkinsconnect
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hopkinsconnect
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: hopkinsconnect
+        component: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: mahendra10/hopkinsconnect-frontend:v1
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+

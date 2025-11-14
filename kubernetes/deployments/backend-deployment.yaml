@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hopkinsconnect-backend
+  labels:
+    app: hopkinsconnect
+    component: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hopkinsconnect
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: hopkinsconnect
+        component: backend
+    spec:
+      containers:
+      - name: backend
+        image: mahendra10/hopkinsconnect-backend:v1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: hopkinsconnect-secrets
+              key: jwt-secret
+        - name: PORT
+          value: "3000"
+        volumeMounts:
+        - name: database-storage
+          mountPath: /app/data
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "384Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+      volumes:
+      - name: database-storage
+        persistentVolumeClaim:
+          claimName: backend-pvc
+

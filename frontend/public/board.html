@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Board - HopkinsConnect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>🎓 HopkinsConnect</h1>
+    </header>
+    
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="profiles.html">Browse Profiles</a>
+        <a href="board.html">Message Board</a>
+    </nav>
+    
+    <main>
+        <section class="board-header">
+            <h2>🗨️ Hopkins Connect Board</h2>
+            <p>Post what you're looking for or browse opportunities from other Hopkins students</p>
+            <button id="newPostBtn" class="btn btn-primary">+ New Post</button>
+        </section>
+        
+        <!-- New Post Form (hidden by default) -->
+        <section id="newPostForm" class="form-section" style="display: none;">
+            <h3>Create a Post</h3>
+            <form id="postForm">
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="Research">🔬 Research Collaboration</option>
+                    <option value="Startup">🚀 Startup Co-founder</option>
+                    <option value="Project">💻 Class Project Partner</option>
+                    <option value="Study">📚 Study Group</option>
+                    <option value="Other">🔧 Other</option>
+                </select>
+                <input type="text" id="postTitle" placeholder="Title (e.g., 'Looking for AI Research Partner')" required maxlength="100">
+                <textarea id="postMessage" placeholder="Describe what you're looking for..." rows="4" required maxlength="500"></textarea>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">Post</button>
+                    <button type="button" id="cancelPostBtn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+            <div id="postMessage"></div>
+        </section>
+        
+        <!-- Posts Container -->
+        <section id="postsContainer" class="posts-grid">
+            <p>Loading posts...</p>
+        </section>
+    </main>
+    
+    <footer>
+        <p>HopkinsConnect - JHU Cloud Security Project</p>
+    </footer>
+    
+    <script src="app.js"></script>
+    <script src="board.js"></script>
+</body>
+</html>
+

@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('./database');
+const { initDatabase, getDb } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,6 +14,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
+
+let db;
+
+// Initialize database
+initDatabase().then(database => {
+  db = getDb();
+  
+  // Start server after database is ready
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`HopkinsConnect API running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -38,16 +53,19 @@ app.post('/api/register', async (req, res) => {
       'INSERT INTO users (name, email, password, major, interests, bio) VALUES (?, ?, ?, ?, ?, ?)'
     );
     
-    const result = stmt.run(name, email, hashedPassword, major, interests, bio);
-    
-    res.status(201).json({ 
-      message: 'User registered successfully',
-      userId: result.lastInsertRowid 
-    });
-  } catch (error) {
-    if (error.code === 'SQLITE_CONSTRAINT') {
-      return res.status(409).json({ error: 'Email already exists' });
+    try {
+      const result = stmt.run(name, email, hashedPassword, major, interests, bio);
+      res.status(201).json({ 
+        message: 'User registered successfully',
+        userId: result.lastInsertRowid 
+      });
+    } catch (error) {
+      if (error.message && error.message.includes('UNIQUE constraint failed')) {
+        return res.status(409).json({ error: 'Email already exists' });
+      }
+      throw error;
     }
+  } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
   }
@@ -140,8 +158,54 @@ app.get('/api/profiles/search', (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`HopkinsConnect API running on port ${PORT}`);
+// Create a post (Message Board)
+app.post('/api/posts', (req, res) => {
+  try {
+    const { title, message, category, userId } = req.body;
+    
+    if (!title || !message || !userId) {
+      return res.status(400).json({ error: 'Title, message, and userId are required' });
+    }
+    
+    const stmt = db.prepare(
+      'INSERT INTO posts (user_id, title, message, category) VALUES (?, ?, ?, ?)'
+    );
+    
+    const result = stmt.run(userId, title, message, category || 'General');
+    
+    res.status(201).json({
+      message: 'Post created successfully',
+      postId: result.lastInsertRowid
+    });
+  } catch (error) {
+    console.error('Post creation error:', error);
+    res.status(500).json({ error: 'Failed to create post' });
+  }
 });
 
+// Get all posts with user information (Message Board)
+app.get('/api/posts', (req, res) => {
+  try {
+    const stmt = db.prepare(`
+      SELECT 
+        posts.id,
+        posts.title,
+        posts.message,
+        posts.category,
+        posts.created_at,
+        users.name as user_name,
+        users.email as user_email,
+        users.major as user_major
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      ORDER BY posts.created_at DESC
+    `);
+    
+    const posts = stmt.all();
+    
+    res.json({ posts });
+  } catch (error) {
+    console.error('Get posts error:', error);
+    res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
