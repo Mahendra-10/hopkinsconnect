@@ -17,6 +17,16 @@ spec:
         app: hopkinsconnect
         component: backend
     spec:
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      initContainers:
+      - name: fix-perms
+        image: busybox:1.36
+        command: ["sh","-c","chgrp -R 1000 /app/data && chmod -R g+w /app/data || true"]
+        volumeMounts:
+        - name: database-storage
+          mountPath: /app/data
       containers:
       - name: backend
         image: mahendra10/hopkinsconnect-backend:v1
@@ -47,6 +57,9 @@ spec:
           runAsUser: 1000
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+              - ALL
       volumes:
       - name: database-storage
         persistentVolumeClaim:
